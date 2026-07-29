@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Iowa City Litter Crew</title>
+<style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --g-dark:    #1b5e20;
+      --g-primary: #2e7d32;
+      --g-medium:  #388e3c;
+      --g-light:   #4caf50;
+      --g-pale:    #e8f5e9;
+      --amber:     #f57f17;
+      --amber-lt:  #ffca28;
+      --red:       #c62828;
+      --text:      #1a1a1a;
+      --text-mid:  #424242;
+      --text-lt:   #757575;
+      --white:     #ffffff;
+      --border:    #e0e0e0;
+    }
+
+    body { font-family: Georgia, 'Times New Roman', serif; color: var(--text); background: var(--white); line-height: 1.6; }
+
+    /* ── NAV ── */
+    nav {
+      position: sticky; top: 0; z-index: 200;
+      background: var(--g-dark);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 2rem; height: 58px;
+    }
+    .nav-brand { color: white; font-size: 1rem; font-weight: bold; text-decoration: none; letter-spacing: .4px; }
+    .nav-links  { display: flex; gap: 1.6rem; list-style: none; }
+    .nav-links a { color: rgba(255,255,255,.82); text-decoration: none; font-family: sans-serif; font-size: .88rem; letter-spacing: .4px; transition: color .2s; }
+    .nav-links a:hover { color: var(--amber-lt); }
+    @media (max-width:680px) { .nav-links { display: none; } }
+
+    /* ── HERO ── */
+    .hero {
+      background: linear-gradient(135deg, var(--g-dark) 0%, var(--g-medium) 100%);
+      color: white; padding: 5rem 2rem; text-align: center; position: relative; overflow: hidden;
+    }
+    .hero-bg {
+      position: absolute; inset: 0; width: 100%; height: 100%;
+      object-fit: cover; opacity: .28; z-index: 0;
+    }
+    .hero > *:not(.hero-bg) { position: relative; z-index: 1; }
+    .hero-logo { width: 210px; height: auto; margin-bottom: 1.5rem; filter: drop-shadow(0 4px 14px rgba(0,0,0,.4)); }
+    .hero h1   { font-size: 2.7rem; text-shadow: 0 2px 4px rgba(0,0,0,.35); margin-bottom: .4rem; }
+    .hero-sub  { font-size: 1.1rem; font-style: italic; opacity: .9; max-width: 580px; margin: 0 auto 2rem; }
+    .btn { display: inline-block; padding: .75rem 1.9rem; border-radius: 30px; text-decoration: none; font-family: sans-serif; font-weight: 700; font-size: .95rem; letter-spacing: .4px; transition: background .2s, transform .18s; }
+    .btn-amber { background: var(--amber); color: white; box-shadow: 0 4px 14px rgba(0,0,0,.25); }
+    .btn-amber:hover { background: #e65100; transform: translateY(-2px); }
+
+    /* ── LAYOUT ── */
+    .wrap  { max-width: 1100px; margin: 0 auto; padding: 4rem 2rem; }
+    .band  { padding: 4rem 2rem; }
+    .band-green { background: var(--g-pale); }
+    .band-dark  { background: var(--g-dark); color: white; }
+
+    .section-label {
+      font-family: sans-serif; font-size: .72rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 2.5px;
+      color: var(--g-medium); margin-bottom: .5rem; display: block;
+    }
+    .band-dark .section-label { color: var(--amber-lt); }
+
+    h2 { font-size: 1.9rem; color: var(--g-dark); margin-bottom: 1rem; }
+    h2::after { content: ''; display: block; height: 3px; width: 55px; background: var(--amber); margin-top: .4rem; border-radius: 2px; }
+    .band-dark h2 { color: white; }
+    .band-dark h2::after { background: var(--amber-lt); }
+
+    p { margin-bottom: 1rem; }
+    p:last-child { margin-bottom: 0; }
+    a { color: var(--g-primary); }
+
+    /* ── MISSION QUOTE ── */
+    .mission-quote {
+      background: var(--g-dark); color: white;
+      border-radius: 12px; padding: 3rem; text-align: center; margin: 2rem 0;
+      position: relative;
+    }
+    .mission-quote::before {
+      content: '\201C'; font-size: 7rem; line-height: 0; opacity: .18;
+      display: block; margin-bottom: 1.2rem; font-family: Georgia, serif;
+    }
+    .mission-quote p { font-size: 1.3rem; line-height: 1.85; font-style: italic; max-width: 720px; margin: 0 auto; }
+
+    /* ── GRIDS ── */
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 2rem; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.5rem; margin-top: 2rem; }
+    .grid-4 { display: grid; grid-template-columns: repeat(4,1fr); gap: 1.5rem; margin-top: 2rem; }
+    @media (max-width:800px) {
+      .grid-2 { grid-template-columns: 1fr; }
+      .grid-3 { grid-template-columns: 1fr; }
+      .grid-4 { grid-template-columns: repeat(2,1fr); }
+    }
+
+    /* ── CARDS ── */
+    .card { background: white; border-radius: 10px; padding: 1.5rem; border-left: 4px solid var(--g-light); }
+    .card-amber { border-left-color: var(--amber); }
+    .card h3 { color: var(--g-dark); margin-bottom: .6rem; font-size: 1.05rem; }
+    .card p  { font-family: sans-serif; font-size: .88rem; color: var(--text-mid); margin-bottom: .9rem; }
+    .card p:last-child { margin-bottom: 0; }
+    .card-link { font-family: sans-serif; font-size: .83rem; font-weight: 700; color: var(--g-primary); text-decoration: none; }
+    .card-link:hover { text-decoration: underline; }
+
+    /* ── TABS ── */
+    .tabs {
+      display: flex; gap: 0; margin-top: 1.5rem;
+      border-bottom: 2px solid var(--border);
+    }
+    .tab-btn {
+      font-family: sans-serif; font-size: .88rem; font-weight: 600;
+      padding: .65rem 1.4rem; border: none; background: none; cursor: pointer;
+      color: var(--text-lt); border-bottom: 3px solid transparent; margin-bottom: -2px;
+      transition: color .2s; letter-spacing: .2px;
+    }
+    .tab-btn:hover { color: var(--g-primary); }
+    .tab-btn.active { color: var(--g-dark); border-bottom-color: var(--amber); }
+    .tab-panel { padding-top: .5rem; }
+
+    /* ── STATS ── */
+    .stats-row { display: grid; grid-template-columns: repeat(4,1fr); gap: 1.2rem; margin: 2rem 0; }
+    @media (max-width:700px) { .stats-row { grid-template-columns: repeat(2,1fr); } }
+    .stat { background: white; border-radius: 10px; padding: 1.5rem; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,.07); }
+    .stat-num   { display: block; font-size: 2.1rem; font-weight: bold; color: var(--g-primary); font-family: sans-serif; }
+    .stat-label { font-size: .8rem; color: var(--text-lt); font-family: sans-serif; margin-top: .3rem; display: block; }
+
+    /* ── TABLES ── */
+    .tbl { width: 100%; border-collapse: collapse; margin-top: 1.5rem; font-family: sans-serif; font-size: .88rem; }
+    .tbl th { background: var(--g-primary); color: white; padding: .75rem 1rem; text-align: left; font-weight: 600; }
+    .tbl td { padding: .7rem 1rem; border-bottom: 1px solid var(--border); vertical-align: middle; }
+    .tbl tr:nth-child(even) td { background: #f7f7f7; }
+    .tbl tr:hover td { background: var(--g-pale); transition: background .15s; }
+
+    .photo-thumb { width: 72px; height: 48px; object-fit: cover; border-radius: 5px; display: block; }
+    .photo-none  { width: 72px; height: 48px; background: #e0e0e0; border-radius: 5px; display: flex; align-items: center; justify-content: center; font-size: .65rem; color: #999; font-family: sans-serif; }
+
+    .badge { display: inline-block; background: var(--g-primary); color: white; padding: .2rem .7rem; border-radius: 20px; font-size: .82rem; font-weight: 700; white-space: nowrap; }
+    .badge-upcoming { background: var(--amber); }
+
+    .lnk {
+      display: inline-block; font-size: .72rem; font-family: sans-serif; font-weight: 600;
+      padding: .07rem .42rem; border-radius: 3px; text-decoration: none; margin-right: .2rem;
+      border: 1px solid; white-space: nowrap; transition: background .15s, color .15s;
+    }
+    .lnk-mu  { color: #d32f2f; border-color: #d32f2f; }
+    .lnk-mu:hover  { background: #d32f2f; color: white; }
+    .lnk-olm { color: var(--g-primary); border-color: var(--g-primary); }
+    .lnk-olm:hover { background: var(--g-primary); color: white; }
+
+    /* ── ACCORDION ── */
+    .accord { border: 1px solid var(--border); border-radius: 9px; margin-bottom: 1rem; overflow: hidden; }
+    .accord-hd {
+      background: white; padding: 1rem 1.5rem;
+      display: flex; justify-content: space-between; align-items: center;
+      cursor: pointer; user-select: none; transition: background .18s;
+    }
+    .accord-hd:hover { background: var(--g-pale); }
+    .accord-hd h3 { color: var(--g-dark); margin: 0; font-size: 1.05rem; }
+    .accord-meta { color: var(--text-lt); font-size: .82rem; font-family: sans-serif; margin-top: .2rem; }
+    .accord-icon { font-size: 1.4rem; color: var(--g-primary); }
+    .accord-body { max-height: 0; overflow: hidden; transition: max-height .4s ease; }
+    .accord-body.open { max-height: 900px; }
+    .accord-inner { padding: 0 1.5rem 1.5rem; }
+
+    /* ── CHARTS ── */
+    .charts-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 2rem; }
+    @media (max-width:800px) { .charts-2 { grid-template-columns: 1fr; } }
+    .chart-card { background: white; border-radius: 10px; padding: 1.5rem; box-shadow: 0 2px 10px rgba(0,0,0,.07); }
+    .chart-card h3 { font-family: sans-serif; font-size: .85rem; font-weight: 700; text-transform: uppercase; letter-spacing: .6px; color: var(--g-dark); margin-bottom: 1rem; }
+    .chart-card canvas { max-height: 320px; }
+
+    .smalls { display: grid; grid-template-columns: repeat(4,1fr); gap: 1.2rem; margin-top: 1.5rem; }
+    @media (max-width:800px) { .smalls { grid-template-columns: repeat(2,1fr); } }
+    .sm-card { background: white; border-radius: 9px; padding: 1rem; box-shadow: 0 1px 6px rgba(0,0,0,.07); }
+    .sm-year  { font-family: sans-serif; font-size: .82rem; font-weight: 700; color: var(--text-lt); text-transform: uppercase; letter-spacing: .6px; }
+    .sm-total { font-family: sans-serif; font-size: 1.5rem; font-weight: bold; color: var(--g-primary); }
+    .sm-note  { font-family: sans-serif; font-size: .7rem; color: var(--text-lt); margin-bottom: .5rem; }
+    .sm-card canvas { max-height: 80px; }
+
+    /* ── BOTTLE BILL ── */
+    .bb-card { background: white; border-radius: 10px; padding: 1.5rem; box-shadow: 0 2px 10px rgba(0,0,0,.07); margin-top: 1.5rem; }
+    .bb-card h3 { font-family: sans-serif; font-size: .85rem; font-weight: 700; text-transform: uppercase; letter-spacing: .6px; color: var(--g-dark); margin-bottom: .5rem; }
+    .bb-desc { font-family: sans-serif; font-size: .85rem; color: var(--text-mid); margin-bottom: 1.2rem; }
+    .bb-rows { display: flex; flex-direction: column; gap: .9rem; }
+    .bb-row  { display: flex; align-items: center; gap: .9rem; font-family: sans-serif; font-size: .83rem; }
+    .bb-lbl  { width: 220px; flex-shrink: 0; color: var(--text-mid); line-height: 1.35; }
+    .bb-lbl small { color: var(--text-lt); font-size: .78rem; display: block; }
+    .bb-track { flex: 1; background: #f0f0f0; border-radius: 4px; height: 30px; overflow: hidden; }
+    .bb-fill  { height: 100%; border-radius: 4px; display: flex; align-items: center; padding-left: 10px; color: white; font-size: .8rem; font-weight: bold; }
+    .bb-n { width: 50px; text-align: right; color: var(--text-mid); font-weight: bold; }
+    .bb-note { font-family: sans-serif; font-size: .75rem; color: var(--text-lt); font-style: italic; margin-top: 1rem; }
+
+    /* ── VOLUNTEER ── */
+    .vol-card { background: rgba(255,255,255,.1); border-radius: 10px; padding: 1.5rem; text-align: center; border: 1px solid rgba(255,255,255,.2); }
+    .vol-icon { width: 52px; height: 52px; border-radius: 50%; background: rgba(255,255,255,.15); display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; font-family: sans-serif; font-size: .75rem; font-weight: 700; color: var(--amber-lt); letter-spacing: .5px; text-transform: uppercase; }
+    .vol-card h3 { color: var(--amber-lt); margin-bottom: .5rem; font-size: 1rem; }
+    .vol-card p  { color: rgba(255,255,255,.82); font-family: sans-serif; font-size: .85rem; margin: 0; }
+
+    /* ── IDEAS ── */
+    .idea-card { background: var(--g-pale); border-radius: 10px; padding: 1.5rem; border-top: 4px solid var(--g-primary); }
+    .idea-card.accent { border-top-color: var(--amber); }
+    .idea-card h3 { color: var(--g-dark); margin-bottom: .5rem; }
+    .idea-card p  { font-family: sans-serif; font-size: .88rem; color: var(--text-mid); margin: 0; }
+
+    /* ── FOOTER ── */
+    footer { background: #111; color: rgba(255,255,255,.65); text-align: center; padding: 2rem; font-family: sans-serif; font-size: .82rem; }
+    footer a { color: var(--amber-lt); text-decoration: none; }
+    footer p + p { margin-top: .4rem; }
+
+    .mt-2 { margin-top: 2rem; }
+    .text-center { text-align: center; }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-brand" href="#">Iowa City Litter Crew</a>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#events">Events</a></li>
+    <li><a href="#media">Media</a></li>
+    <li><a href="#goals">Goals</a></li>
+    <li><a href="#local">Iowa City</a></li>
+    <li><a href="#solutions">Solutions</a></li>
+    <li><a href="data.html" target="_blank" rel="noopener">Data</a></li>
+    <li><a href="#take-action">Take Action</a></li>
+    <li><a href="#olm">Use OLM</a></li>
+    <li><a href="#for-fun">For Fun</a></li>
+    <li><a href="#support">Get Involved</a></li>
+    <li><a href="LitterFieldGuide2026.pdf" target="_blank" rel="noopener">Field Guide</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <img src="hero.jpg" alt="" class="hero-bg">
+  <img src="Logo/ICLC No1 2-13-26.png" alt="Iowa City Litter Crew Logo" class="hero-logo">
+  <h1>Iowa City Litter Crew</h1>
+  <p class="hero-sub">Empowering people to pick up litter — connecting with nature and neighbors.</p>
+  <a href="#events" class="btn btn-amber" onclick="showTab(document.getElementById('tabUpcoming'),'upcoming')">Join Our Next Cleanup</a>
+</div>
+
+<!-- MISSION -->
+<div class="wrap" id="mission">
+  <span class="section-label">Our Purpose</span>
+  <h2>Mission Statement</h2>
+  <div class="mission-quote">
+    <p>The Iowa City Litter Crew empowers people to pick up litter in order to connect with nature and neighbors.</p>
+  </div>
+</div>
+
+<!-- ABOUT -->
+<div class="band band-green" id="about">
+  <div class="wrap" style="padding-top:0;padding-bottom:0;">
+    <span class="section-label">Who We Are</span>
+    <h2>About Us</h2>
+    <p>Founded by Cara Keller in 2023, the Iowa City Litter Crew are volunteers who get together for monthly cleanups. We meet with business and community leaders to raise awareness of the need to manage litter and collaborate on practical solutions with relevant stakeholders.</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-top:2rem;align-items:stretch;">
+      <figure style="margin:0;display:flex;flex-direction:column;">
+        <img src="Other Photos/TeamPic.jpg" alt="Iowa City Litter Crew leadership team" style="width:100%;border-radius:10px;display:block;flex:1;object-fit:cover;">
+        <figcaption style="font-family:sans-serif;font-size:.82rem;color:var(--text-lt);margin-top:.5rem;">The Iowa City Litter Crew leadership team<br>Amy Chen, Melissa Serenda, Cara Keller, and Angela Lambertz.</figcaption>
+      </figure>
+      <div style="display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:1.5rem;">
+        <div class="card">
+          <h3>Monthly Cleanups</h3>
+          <p>We organize neighborhood litter pickups across Iowa City every month — tackling parks, trails, commercial corridors, and residential streets.</p>
+        </div>
+        <div class="card">
+          <h3>Community Advocacy</h3>
+          <p>We partner with local businesses, the City of Iowa City, and community organizations to address the root causes of litter in our neighborhoods.</p>
+        </div>
+        <div class="card">
+          <h3>Citizen Science</h3>
+          <p>Volunteers photograph and tag litter using the OpenLitterMap app, building an open dataset that tracks pollution hotspots over time.</p>
+        </div>
+        <div class="card">
+          <h3>Youth Engagement</h3>
+          <p>We believe in growing the next generation of environmental stewards, welcoming families, students, and youth groups to all our events.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- EVENTS (tabbed) -->
+<div class="wrap" id="events">
+  <h2>Events</h2>
+
+  <div class="tabs">
+    <button class="tab-btn active" id="tabUpcoming" onclick="showTab(this,'upcoming')">Upcoming</button>
+    <button class="tab-btn" onclick="showTab(this,'completed')">2026 Completed</button>
+    <button class="tab-btn" onclick="showTab(this,'archive')">Archive</button>
+  </div>
+
+  <!-- TAB: COMPLETED -->
+  <div id="tab-completed" class="tab-panel" style="display:none;">
+    <p style="margin-top:1.2rem;">Completed cleanups this year. Click any photo for a full view; follow the links to the Meetup event page or OpenLitterMap data.</p>
+    <table class="tbl">
+      <thead>
+        <tr><th>Date</th><th>Location</th><th>Photo</th><th>Bags</th><th>Links</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Feb 8, 2026</td>
+          <td>Sycamore Greenway</td>
+          <td><a href="Event Photos/2026-02-08_SycamoreGreenway.jpg" target="_blank"><img class="photo-thumb" src="Event Photos/2026-02-08_SycamoreGreenway.jpg" alt="Sycamore Greenway"></a></td>
+          <td><span class="badge">10</span></td>
+          <td><a href="https://www.meetup.com/iowa-city-litter-crew/events/313219484/" target="_blank" rel="noopener" class="lnk lnk-mu">Meetup</a> <a href="https://openlittermap.com/global?lat=41.630572399722&lon=-91.507202199722&zoom=17&photoId=546733&load=true" target="_blank" rel="noopener" class="lnk lnk-olm">Map</a></td>
+        </tr>
+        <tr>
+          <td>Mar 1, 2026</td>
+          <td>Whispering Meadows</td>
+          <td><a href="Event Photos/2026-03-01_Whispering_Meadows.jpg" target="_blank"><img class="photo-thumb" src="Event Photos/2026-03-01_Whispering_Meadows.jpg" alt="Whispering Meadows"></a></td>
+          <td><span class="badge">14</span></td>
+          <td><a href="https://openlittermap.com/global?lat=41.6298893&lon=-91.4989896&zoom=17&photoId=546737&load=true" target="_blank" rel="noopener" class="lnk lnk-olm">Map</a></td>
+        </tr>
+        <tr>
+          <td>Mar 7, 2026</td>
+          <td>Ralston Creek</td>
+          <td><a href="Event Photos/2026-03-07_RalstonCreek.jpg" target="_blank"><img class="photo-thumb" src="Event Photos/2026-03-07_RalstonCreek.jpg" alt="Ralston Creek"></a></td>
+          <td><span class="badge">9</span></td>
+          <td><a href="https://www.meetup.com/iowa-city-litter-crew/events/313050062/" target="_blank" rel="noopener" class="lnk lnk-mu">Meetup</a> <a href="https://openlittermap.com/global?lat=41.659792&lon=-91.528983&zoom=17.00&load=true&photo=546738" target="_blank" rel="noopener" class="lnk lnk-olm">Map</a></td>
+        </tr>
+        <tr>
+          <td>Apr 4, 2026</td>
+          <td>Terry Trueblood Recreation Area</td>
+          <td><a href="Event Photos/2026-04-04_Terry_Trueblood.jpg" target="_blank"><img class="photo-thumb" src="Event Photos/2026-04-04_Terry_Trueblood.jpg" alt="Terry Trueblood"></a></td>
+          <td><span class="badge">3</span></td>
+          <td><a href="https://www.meetup.com/iowa-city-litter-crew/events/313050220/" target="_blank" rel="noopener" class="lnk lnk-mu">Meetup</a></td>
+        </tr>
+        <tr>
+          <td>Apr 11, 2026</td>
+          <td>Northside Neighborhood</td>
+          <td><a href="Event Photos/2026-04-11_Northside.JPEG" target="_blank"><img class="photo-thumb" src="Event Photos/2026-04-11_Northside.JPEG" alt="Northside Neighborhood"></a></td>
+          <td><span class="badge">6</span></td>
+          <td><a href="https://www.meetup.com/iowa-city-litter-crew/events/313702192/" target="_blank" rel="noopener" class="lnk lnk-mu">Meetup</a> <a href="https://openlittermap.com/global?lat=41.666836111111&lon=-91.527213888889&zoom=17&photoId=546734&load=true" target="_blank" rel="noopener" class="lnk lnk-olm">Map</a></td>
+        </tr>
+        <tr>
+          <td>Apr 19, 2026</td>
+          <td>Whispering Meadows</td>
+          <td><a href="Event Photos/2026-04-19_Whispering Meadows.jpeg" target="_blank"><img class="photo-thumb" src="Event Photos/2026-04-19_Whispering Meadows.jpeg" alt="Whispering Meadows"></a></td>
+          <td><span class="badge">25</span></td>
+          <td><a href="https://www.meetup.com/iowa-city-litter-crew/events/313050261/" target="_blank" rel="noopener" class="lnk lnk-mu">Meetup</a> <a href="https://openlittermap.com/global?lat=41.629791666667&lon=-91.498977777778&zoom=17&photoId=546328&load=true" target="_blank" rel="noopener" class="lnk lnk-olm">Map</a></td>
+        </tr>
+        <tr>
+          <td>May 22, 2026</td>
+          <td>Bowery Street</td>
+          <td><a href="Event Photos/2026-05-22_Bowery_Street.jpg" target="_blank"><img class="photo-thumb" src="Event Photos/2026-05-22_Bowery_Street.jpg" alt="Bowery Street"></a></td>
+          <td><span class="badge">7</span></td>
+          <td><a href="https://www.meetup.com/iowa-city-litter-crew/events/314352910/" target="_blank" rel="noopener" class="lnk lnk-mu">Meetup</a> <a href="https://openlittermap.com/global?lat=41.653108699722&lon=-91.5295262&zoom=17&photoId=546735&load=true" target="_blank" rel="noopener" class="lnk lnk-olm">Map</a></td>
+        </tr>
+        <tr>
+          <td>May 30, 2026</td>
+          <td>Sycamore Mall</td>
+          <td><a href="Event Photos/2026-05-30_SycamoreMall.jpg" target="_blank"><img class="photo-thumb" src="Event Photos/2026-05-30_SycamoreMall.jpg" alt="Sycamore Mall"></a></td>
+          <td><span class="badge">4</span></td>
+          <td><a href="https://www.meetup.com/iowa-city-litter-crew/events/314516247/" target="_blank" rel="noopener" class="lnk lnk-mu">Meetup</a> <a href="https://openlittermap.com/global?lat=41.641788099722&lon=-91.507475799722&zoom=17&photoId=546736&load=true" target="_blank" rel="noopener" class="lnk lnk-olm">Map</a></td>
+        </tr>
+        <tr>
+          <td>Jun 6, 2026</td>
+          <td>Wonderful Westside</td>
+          <td><a href="Event Photos/2026-06-06_WonderfulWestside.jpg" target="_blank"><img class="photo-thumb" src="Event Photos/2026-06-06_WonderfulWestside.jpg" alt="Wonderful Westside"></a></td>
+          <td><span class="badge">8</span></td>
+          <td><a href="https://www.meetup.com/iowa-city-litter-crew/events/314767004/" target="_blank" rel="noopener" class="lnk lnk-mu">Meetup</a></td>
+        </tr>
+        <tr>
+          <td>Jun 27, 2026</td>
+          <td>Iowa River Corridor Trail</td>
+          <td><a href="Event Photos/2026-06-27_Iowa River Corridor Trail.jpg" target="_blank"><img class="photo-thumb" src="Event Photos/2026-06-27_Iowa River Corridor Trail.jpg" alt="Iowa River Corridor Trail"></a></td>
+          <td><span class="badge">10</span></td>
+          <td><a href="https://www.meetup.com/iowa-city-litter-crew/events/315145213/" target="_blank" rel="noopener" class="lnk lnk-mu">Meetup</a> <a href="https://openlittermap.com/global?lat=41.648890&lon=-91.534669&zoom=17.00&photo=545909&load=true&open=true" target="_blank" rel="noopener" class="lnk lnk-olm">Map</a></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- TAB: UPCOMING -->
+  <div id="tab-upcoming" class="tab-panel">
+    <p style="margin-top:1.2rem;">Join us for our remaining 2026 cleanups. All events are free — supplies provided.</p>
+    <table class="tbl">
+      <thead>
+        <tr><th>Date</th><th>Location</th><th>RSVP</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>August 1, 2026</strong></td>
+          <td><strong>Wetherby Park Walk</strong></td>
+          <td><a href="https://www.meetup.com/iowa-city-litter-crew/events/315146096/" target="_blank" rel="noopener" class="lnk lnk-mu">Meetup</a></td>
+        </tr>
+        <tr>
+          <td>September 6, 2026</td>
+          <td>Ralston Creek</td>
+          <td><a href="https://www.meetup.com/iowa-city-litter-crew/events/315150894/" target="_blank" rel="noopener" class="lnk lnk-mu">Meetup</a></td>
+        </tr>
+        <tr>
+          <td>October 3, 2026</td>
+          <td>Miller Orchard Neighborhood</td>
+          <td><a href="https://www.meetup.com/iowa-city-litter-crew/events/315356586/" target="_blank" rel="noopener" class="lnk lnk-mu">Meetup</a></td>
+        </tr>
+        <tr>
+          <td>October 17, 2026</td>
+          <td>Northside Neighborhood</td>
+          <td><a href="https://www.meetup.com/iowa-city-litter-crew/events/315356603/" target="_blank" rel="noopener" class="lnk lnk-mu">Meetup</a></td>
+        </tr>
+        <tr>
+          <td>November 7, 2026</td>
+          <td>Sycamore Greenway</td>
+          <td><a href="https://www.meetup.com/iowa-city-litter-crew/events/315150564/" target="_blank" rel="noopener" class="lnk lnk-mu">Meetup</a></td>
+        </tr>
+        <tr>
+          <td>November 14, 2026</td>
+          <td>Whispering Meadows</td>
+          <td><a href="https://www.meetup.com/iowa-city-litter-crew/events/315151008/" target="_blank" rel="noopener" class="lnk lnk-mu">Meetup</a></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- TAB: ARCHIVE -->
+  <div id="tab-archive" class="tab-panel" style="display:none;">
+    <p style="margin-top:1.2rem;">A record of every cleanup event since our founding.</p>
+
+    <div class="accord mt-2">
+      <div class="accord-hd" onclick="toggleAccord(this)">
+        <div>
+          <h3>2025 Season</h3>
+          <div class="accord-meta">11 events &bull; Multiple neighborhoods &bull; 113 bags collected</div>
+        </div>
+        <span class="accord-icon">+</span>
+      </div>
+      <div class="accord-body">
+        <div class="accord-inner">
+          <table class="tbl">
+            <thead><tr><th>Date</th><th>Location</th><th>Bags</th><th>Links</th></tr></thead>
+            <tbody>
+              <tr><td>Mar 9</td><td>Pepperwood Plaza</td><td>8</td><td><a href="https://www.meetup.com/iowa-city-litter-crew/events/306524461/" target="_blank" rel="noopener" class="lnk lnk-mu">Meetup</a></td></tr>
+              <tr><td>Mar 16</td><td>Whispering Meadows Wetland</td><td>15</td><td><a href="https://www.meetup.com/iowa-city-litter-crew/events/306700738/" target="_blank" rel="noopener" class="lnk lnk-mu">Meetup</a></td></tr>
+              <tr><td>Mar 16</td><td>Whispering Meadows Wetland</td><td>13</td><td><a href="https://www.meetup.com/iowa-city-litter-crew/events/306700738/" target="_blank" rel="noopener" class="lnk lnk-mu">Meetup</a></td></tr>
+              <tr><td>Mar 22</td><td>Whispering Meadows Wetland</td><td>8</td><td><a href="https://www.meetup.com/iowa-city-litter-crew/events/307809579/" target="_blank" rel="noopener" class="lnk lnk-mu">Meetup</a> <a href="https://openlittermap.com/global?lat=41.629741666667&lon=-91.499252777778&zoom=17&photoId=546337&load=true" target="_blank" rel="noopener" class="lnk lnk-olm">Map</a></td></tr>
+              <tr><td>Apr 19</td><td>310 3rd Ave., Coralville</td><td>5</td><td><a href="https://www.meetup.com/iowa-city-litter-crew/events/307015270/" target="_blank" rel="noopener" class="lnk lnk-mu">Meetup</a></td></tr>
+              <tr><td>Jul 12</td><td>South of 6 Litter Pickup</td><td>3</td><td><a href="https://www.meetup.com/iowa-city-litter-crew/events/308583267/" target="_blank" rel="noopener" class="lnk lnk-mu">Meetup</a></td></tr>
+              <tr><td>Aug 17</td><td>Westwinds Trail</td><td>6</td><td><a href="https://www.meetup.com/iowa-city-litter-crew/events/310421942/" target="_blank" rel="noopener" class="lnk lnk-mu">Meetup</a></td></tr>
+              <tr><td>Oct 5</td><td>Terry Trueblood</td><td>10</td><td><a href="https://www.meetup.com/iowa-city-litter-crew/events/310860787/" target="_blank" rel="noopener" class="lnk lnk-mu">Meetup</a></td></tr>
+              <tr><td>Oct 12</td><td>Pepperwood Plaza</td><td>10</td><td><a href="https://www.meetup.com/iowa-city-litter-crew/events/311463742/" target="_blank" rel="noopener" class="lnk lnk-mu">Meetup</a></td></tr>
+              <tr><td>Nov 1</td><td>Ralston Creek Downtown</td><td>13</td><td><a href="https://www.meetup.com/iowa-city-litter-crew/events/311506720/" target="_blank" rel="noopener" class="lnk lnk-mu">Meetup</a></td></tr>
+              <tr><td>Nov 15</td><td>Whispering Meadows Wetland</td><td>22</td><td><a href="https://www.meetup.com/iowa-city-litter-crew/events/311657219/" target="_blank" rel="noopener" class="lnk lnk-mu">Meetup</a></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="accord">
+      <div class="accord-hd" onclick="toggleAccord(this)">
+        <div>
+          <h3>2024 Season</h3>
+          <div class="accord-meta">8 events &bull; Multiple neighborhoods &bull; 30 bags collected</div>
+        </div>
+        <span class="accord-icon">+</span>
+      </div>
+      <div class="accord-body">
+        <div class="accord-inner">
+          <table class="tbl">
+            <thead><tr><th>Date</th><th>Location</th><th>Bags</th><th>Links</th></tr></thead>
+            <tbody>
+              <tr><td>Feb 17</td><td>Ralston Creek Downtown</td><td>5</td><td><a href="https://www.meetup.com/iowa-city-litter-crew/events/298378806/" target="_blank" rel="noopener" class="lnk lnk-mu">Meetup</a></td></tr>
+              <tr><td>Apr 14</td><td>Downtown Litter Pickup</td><td>4</td><td><a href="https://www.meetup.com/iowa-city-litter-crew/events/300112897/" target="_blank" rel="noopener" class="lnk lnk-mu">Meetup</a></td></tr>
+              <tr><td>Apr 21</td><td>South of 6 Litter Pickup</td><td>3</td><td><a href="https://www.meetup.com/iowa-city-litter-crew/events/300113247/" target="_blank" rel="noopener" class="lnk lnk-mu">Meetup</a></td></tr>
+              <tr><td>Jun 23</td><td>Sycamore Mall</td><td>2</td><td><a href="https://www.meetup.com/iowa-city-litter-crew/events/301693538/" target="_blank" rel="noopener" class="lnk lnk-mu">Meetup</a></td></tr>
+              <tr><td>Aug 24</td><td>Sycamore Mall</td><td>3</td><td><a href="https://www.meetup.com/iowa-city-litter-crew/events/302376763/" target="_blank" rel="noopener" class="lnk lnk-mu">Meetup</a></td></tr>
+              <tr><td>Sep 14</td><td>Pepperwood Plaza</td><td>4</td><td><a href="https://www.meetup.com/iowa-city-litter-crew/events/303145214/" target="_blank" rel="noopener" class="lnk lnk-mu">Meetup</a></td></tr>
+              <tr><td>Oct 12</td><td>Pepperwood Plaza</td><td>5</td><td><a href="https://www.meetup.com/iowa-city-litter-crew/events/303588456/" target="_blank" rel="noopener" class="lnk lnk-mu">Meetup</a></td></tr>
+              <tr><td>Nov 9</td><td>Pepperwood Plaza</td><td>4</td><td><a href="https://www.meetup.com/iowa-city-litter-crew/events/304062940/" target="_blank" rel="noopener" class="lnk lnk-mu">Meetup</a></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="accord">
+      <div class="accord-hd" onclick="toggleAccord(this)">
+        <div>
+          <h3>2023 Season &mdash; Founding Year</h3>
+          <div class="accord-meta">3 events &bull; Iowa City &bull; 11 attendees</div>
+        </div>
+        <span class="accord-icon">+</span>
+      </div>
+      <div class="accord-body">
+        <div class="accord-inner">
+          <p style="font-family:sans-serif;font-size:.88rem;color:var(--text-mid);margin-bottom:1rem;">
+            Our founding year — Cara Keller launched the Iowa City Litter Crew in 2023. These first three events laid the foundation for everything that followed.
+          </p>
+          <table class="tbl">
+            <thead><tr><th>Date</th><th>Event</th><th>Location</th><th>Attendees</th></tr></thead>
+            <tbody>
+              <tr>
+                <td>Sep 23, 2023</td>
+                <td>Litter Crew Social &amp; Kick Off</td>
+                <td>The Java House Coffee Roasters – First Ave, 1575 S 1st Ave</td>
+                <td>4</td>
+              </tr>
+              <tr>
+                <td>Oct 14, 2023</td>
+                <td>Litter Pickup &amp; Coffee</td>
+                <td>Press Coffee / Hickory Hill Park, 1120 N Dodge St</td>
+                <td>5</td>
+              </tr>
+              <tr>
+                <td>Nov 12, 2023</td>
+                <td>Downtown Litter Pickup</td>
+                <td>Iowa City Public Library, 123 S Linn St</td>
+                <td>2</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div><!-- end tab-archive -->
+</div><!-- end events wrap -->
+
+<!-- IN THE MEDIA -->
+<div class="wrap" id="media">
+  <span class="section-label">Press &amp; Media</span>
+  <h2>In the Media</h2>
+  <p>Iowa City Litter Crew has been featured in local journalism and community storytelling projects.</p>
+  <div class="grid-3">
+    <div class="card">
+      <h3>The Daily Iowan</h3>
+      <p>Iowa City works to combat litter through city and volunteer programs — featuring the work of the Iowa City Litter Crew.</p>
+      <a href="https://dailyiowan.com/2026/04/21/iowa-city-works-to-combat-litter-through-city-and-volunteer-programs/" target="_blank" rel="noopener" class="card-link">Read the article &rarr;</a>
+    </div>
+    <div class="card">
+      <h3>Article by Gavin Wade</h3>
+      <p>An in-depth multimedia story about the Iowa City Litter Crew, produced through the University of Iowa School of Journalism.</p>
+      <a href="https://ui-sjmc.shorthandstories.com/iowa-city-litter-crew/index.html" target="_blank" rel="noopener" class="card-link">Read the story &rarr;</a>
+    </div>
+    <div class="card">
+      <h3>FilmScene Community Stories</h3>
+      <p>A short film produced by FilmScene as part of their RSFIC Community Stories series, documenting our volunteer cleanup work.</p>
+      <a href="Trash Pickup.mp4" class="card-link">Watch the film &rarr;</a>
+    </div>
+  </div>
+</div>
+
+<!-- OUR GOALS FOR CHANGE -->
+<div class="band band-green" id="goals">
+  <div class="wrap" style="padding-top:0;padding-bottom:0;">
+    <span class="section-label">Our Advocacy</span>
+    <h2>Our Goals for Change</h2>
+    <p>Beyond picking up litter, the Iowa City Litter Crew advocates for lasting change. Here are the concrete improvements we are working toward.</p>
+    <div class="grid-3">
+      <div class="card">
+        <h3>More Trash Cans</h3>
+        <p>Install additional trash cans in locations that have demonstrated high litter density — making it easier for people to dispose of waste properly right where they are.</p>
+      </div>
+      <div class="card">
+        <h3>Whispering Meadows Wetland</h3>
+        <p>Dedicated litter reduction and storm sewer maintenance at the Whispering Meadows Wetland, one of Iowa City's most litter-impacted natural areas.</p>
+      </div>
+      <div class="card">
+        <h3>Expand the Bottle Bill</h3>
+        <p>Expand Iowa's bottle deposit law to include non-carbonated beverages such as water bottles and energy drinks, and increase the deposit amount to better incentivize recycling.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- POSITIVE HAPPENINGS IN IOWA CITY -->
+<div class="wrap" id="local">
+  <span class="section-label">Happening Right Here</span>
+  <h2>Positive Happenings in Iowa City</h2>
+  <p>Iowa City already has programs and initiatives working to improve cleanliness and community pride. Here's what's underway in our neighborhoods.</p>
+  <div class="grid-3">
+    <div class="card">
+      <h3>Ambassador Program &mdash; Downtown District</h3>
+      <p>The Downtown District's Ambassador Program puts trained ambassadors on the streets to keep the downtown core clean, welcoming, and safe.</p>
+      <a href="https://downtowniowacity.com/downtown-iowa-city-ambassador-program/" target="_blank" rel="noopener" class="card-link">Learn more &rarr;</a>
+    </div>
+    <div class="card">
+      <h3>Ambassador Program &mdash; South of 6 District</h3>
+      <p>The South of 6 District launched a grassroots Ambassador Program in partnership with Dream City, focusing on district cleanliness and youth employment.</p>
+      <a href="https://southof6.org/south-of-6-launches-grassroots-ambassador-program-with-dream-city-to-boost-district-cleanliness-and-youth-employment/" target="_blank" rel="noopener" class="card-link">Learn more &rarr;</a>
+    </div>
+    <div class="card">
+      <h3>Project Cleanup</h3>
+      <p>The City of Iowa City's Project Cleanup program provides resources and support for community litter cleanup efforts across neighborhoods.</p>
+      <a href="https://www.icgov.org/government/departments-and-divisions/public-works/resource-management/project-cleanup" target="_blank" rel="noopener" class="card-link">Learn more &rarr;</a>
+    </div>
+  </div>
+</div>
+
+<!-- SUCCESS MODELS -->
+<div class="band band-green" id="solutions">
+  <div class="wrap" style="padding-top:0;padding-bottom:0;">
+    <span class="section-label">What's Working Elsewhere</span>
+    <h2>Success Models</h2>
+    <p>Other cities and counties have enacted programs and policies that directly reduce litter. Here are approaches we believe could work in Iowa City.</p>
+    <div class="grid-2">
+      <div class="card">
+        <h3>Litter Cleanup &amp; Employment Program</h3>
+        <p>Street Teams hire and train people facing employment barriers to clean public spaces — combining environmental impact with workforce development.</p>
+        <a href="https://www.streetsteam.org/" target="_blank" rel="noopener" class="card-link">streetsteam.org &rarr;</a>
+      </div>
+      <div class="card">
+        <h3>Cigarette Filter Ban</h3>
+        <p>Santa Cruz County, CA banned the sale of cigarettes with plastic filters — the most commonly littered plastic item in the world.</p>
+        <a href="https://www.waste360.com/waste-recycling/santa-cruz-county-bans-cigarette-filters" target="_blank" rel="noopener" class="card-link">Read about the ban &rarr;</a>
+      </div>
+      <div class="card">
+        <h3>Single-Use Styrofoam Ban</h3>
+        <p>Baltimore City banned single-use polystyrene foam food containers — a major source of long-lasting litter in waterways and parks.</p>
+        <a href="https://www.baltimoresustainability.org/baltimore-city-foam-ban/" target="_blank" rel="noopener" class="card-link">Read about the ban &rarr;</a>
+      </div>
+      <div class="card">
+        <h3>Single-Use Plastics Ban</h3>
+        <p>Carlsbad, CA enacted one of California's most comprehensive single-use plastics ordinances, targeting the packaging items most frequently found as litter.</p>
+        <a href="https://www.carlsbadca.gov/departments/environmental-sustainability/single-use-plastics-ban" target="_blank" rel="noopener" class="card-link">Read about the ordinance &rarr;</a>
+      </div>
+      <div class="card">
+        <h3>Reusable Cup Systems: Recup &amp; Rebol</h3>
+        <p>Recup and Rebol operate deposit-based reusable cup and bowl systems in Germany — a proven model for eliminating single-use coffee cup waste at scale.</p>
+        <a href="https://www.reuters.com/plus/tbd-media-group/how-recup-is-eliminating-single-use-packaging-to-help-us-achieve-sustainability" target="_blank" rel="noopener" class="card-link">Read about Recup &rarr;</a>
+        &nbsp;
+        <a href="https://www.recup.earth/" target="_blank" rel="noopener" class="card-link">recup.earth &rarr;</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- HARMFUL IMPACTS -->
+<div class="wrap" id="impacts">
+  <span class="section-label">Why It Matters</span>
+  <h2>Harmful Impacts</h2>
+  <p>The litter we pick up in Iowa City isn't just unsightly — the materials themselves pose serious environmental and health risks.</p>
+  <div class="grid-2">
+    <div class="card card-amber">
+      <h3>Cigarette Butts</h3>
+      <p>Cigarette filters are the most commonly littered plastic item globally. They leach nicotine and heavy metals into soil and waterways, and take up to 10 years to break down.</p>
+      <a href="https://www.earthday.org/tiny-but-deadly-cigarette-butts-are-the-most-commonly-polluted-plastic/" target="_blank" rel="noopener" class="card-link">Read more &rarr;</a>
+    </div>
+    <div class="card card-amber">
+      <h3>Disposable Vapes</h3>
+      <p>Single-use e-cigarettes contain lithium batteries, heavy metals, and plastic. Improper disposal creates fire hazards and toxic contamination — and their use is rapidly growing.</p>
+      <a href="https://www.waste360.com/waste-recycling/there-is-no-justification-for-disposable-vapes-period-" target="_blank" rel="noopener" class="card-link">Read more &rarr;</a>
+    </div>
+    <div class="card card-amber">
+      <h3>Single-Use Cups</h3>
+      <p>Most disposable coffee cups have a plastic lining that makes them impossible to recycle. Billions end up in landfills and waterways each year.</p>
+      <a href="https://www.theguardian.com/environment/2024/jan/22/disposable-coffee-cups-environmental-impact" target="_blank" rel="noopener" class="card-link">Read more &rarr;</a>
+    </div>
+    <div class="card card-amber">
+      <h3>Plastic Bags</h3>
+      <p>Plastic bags clog storm drains, harm wildlife, and break into microplastics. An estimated 100 billion are used in the U.S. each year, with less than 1% recycled.</p>
+      <a href="https://www.biologicaldiversity.org/programs/population_and_sustainability/sustainability/plastic_bag_facts.html" target="_blank" rel="noopener" class="card-link">Read more &rarr;</a>
+    </div>
+  </div>
+</div>
+
+<!-- DATA TEASER -->
+<div class="band band-green" id="data">
+  <div class="wrap" style="padding-top:0;padding-bottom:0;">
+    <span class="section-label">Citizen Science</span>
+    <h2>Litter Data</h2>
+    <p>Since 2023, our volunteers have photographed and tagged over 30,000 litter items using the <a href="https://openlittermap.com" target="_blank" rel="noopener">OpenLitterMap</a> app. The data reveals patterns about what litter is most common, which brands appear most often, and how Iowa's bottle bill could be expanded.</p>
+    <div style="margin-top:1.5rem;">
+      <a href="data.html" target="_blank" rel="noopener" class="btn btn-amber">View Litter Data &rarr;</a>
+    </div>
+  </div>
+</div>
+
+<!-- TAKE ACTION AT HOME -->
+<div class="band band-green" id="take-action">
+  <div class="wrap" style="padding-top:0;padding-bottom:0;">
+    <span class="section-label">Make a Difference</span>
+    <h2>Take Action at Home</h2>
+    <p>Reducing litter starts with everyday choices. Here are simple things you can do right now.</p>
+    <div class="grid-3">
+      <div class="card">
+        <h3>Use Reusable Grocery Bags</h3>
+        <p>Keep a reusable bag in your car or backpack so you're always ready. Plastic bags are one of the most common items found as litter in our neighborhoods.</p>
+      </div>
+      <div class="card">
+        <h3>Bring Your Own Cup &amp; Container</h3>
+        <p>Take your own cup for drinks to go and a container for leftovers when eating in. Request a mug when ordering for here. Single-use cups and food packaging make up a large share of what we pick up.</p>
+      </div>
+      <div class="card">
+        <h3>Carry a Pocket Ashtray</h3>
+        <p>Get a small pocket-sized ashtray to carry with you, and dispose of cigarette butts in a trash can. Cigarette filters are the most littered item we find across Iowa City.</p>
+      </div>
+      <div class="card">
+        <h3>Support Responsible Businesses</h3>
+        <p>Choose businesses that are clearly making an effort to reduce single-use plastics and maintain a cleaner property — and let others know why you made that choice.</p>
+      </div>
+      <div class="card">
+        <h3>Pick Up Litter While Walking</h3>
+        <p>It may feel odd at first, but don't worry — all the cool people are doing it. A grocery bag is usually enough to fill on a dog walk.</p>
+      </div>
+      <div class="card">
+        <h3>Redeem Cans at the Can Shed</h3>
+        <p>Rather than recycling, take your redeemable containers to the Can Shed. It supports local jobs — and you can donate your redemption funds to a local cause.</p>
+        <a href="https://canshed.com/" target="_blank" rel="noopener" class="card-link">Visit the Can Shed &rarr;</a>
+      </div>
+      <div class="card" style="grid-column: 1 / -1;">
+        <h3>Dispose of Hazardous Items Properly</h3>
+        <p>When at home or picking up litter, keep these out of regular trash to prevent landfill fires:</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:2rem;margin-top:.8rem;">
+          <div>
+            <p style="font-size:.92rem;color:var(--text-mid);line-height:1.6;"><strong>Vapes &amp; small electronics</strong> (including rechargeables such as electric toothbrushes) — collect and take them to the hazardous waste center at the landfill.</p>
+            <a href="https://www.icgov.org/Home/Components/News/News/2630/390" target="_blank" rel="noopener" class="card-link">Hazardous waste drop-off &rarr;</a>
+          </div>
+          <div>
+            <p style="font-size:.92rem;color:var(--text-mid);line-height:1.6;"><strong>Batteries</strong> — Ace Hardware accepts them. Proper disposal prevents landfill fires.</p>
+            <a href="https://www.axios.com/local/des-moines/2026/05/20/massive-landfill-fire-erupts-in-des-moines-hours-after-city-warning" target="_blank" rel="noopener" class="card-link">Why it matters &rarr;</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- GETTING STARTED WITH OLM -->
+<div class="band band-dark" id="olm">
+  <div class="wrap" style="padding-top:0;padding-bottom:0;">
+    <span class="section-label">Contribute to the Data</span>
+    <h2>Getting Started with OpenLitterMap</h2>
+    <p style="color:rgba(255,255,255,.85);">OpenLitterMap is a tool developed and maintained by volunteers around the world. It's what we use to collect litter data while picking up — letting us track litter patterns by type, behavior, and density across Iowa City.</p>
+
+    <div class="grid-2 mt-2">
+      <div class="card">
+        <h3>How to Join Our Team</h3>
+        <ol style="margin:.6rem 0 1rem 1.2rem;line-height:2;color:var(--text-mid);">
+          <li>Go to <a href="https://openlittermap.com/signup" target="_blank" rel="noopener">openlittermap.com</a> and create a free account.</li>
+          <li>Open the menu and select <strong>Teams</strong> &rarr; <strong>Join a Team</strong>.</li>
+          <li>Enter the code <strong>CleanIC</strong> to join the Iowa City Litter Crew team.</li>
+          <li>When you upload and tag litter photos, they'll appear in our dataset and show up in our Data tab.</li>
+        </ol>
+        <p style="color:var(--text-mid);margin-bottom:1rem;">New to tagging? <a href="https://www.youtube.com/watch?v=b8DwY3W9UEA" target="_blank" rel="noopener">Watch this tutorial</a> to see how it works.</p>
+        <a href="https://openlittermap.com/signup" target="_blank" rel="noopener" class="btn btn-amber">Sign Up for OpenLitterMap</a>
+      </div>
+      <div class="card">
+        <h3>A Few Things to Keep in Mind</h3>
+        <ul style="margin:.6rem 0 1rem 1.2rem;line-height:2;color:var(--text-mid);">
+          <li>Your first 100 tagged photos will need to be verified before they appear on the global map.</li>
+          <li>Make sure your camera's location services are set to <strong>precise location</strong> — photos without location data cannot be uploaded.</li>
+          <li>Have questions or running into trouble with the app? Email us or join us on a cleanup — one of us will gladly help.</li>
+        </ul>
+        <a href="mailto:iowacitylittercrew@gmail.com" class="btn btn-amber">Email the Litter Crew</a>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:1.5rem;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);">
+      <p style="color:rgba(255,255,255,.8);margin:0;line-height:1.75;">Litter is a reflection of our values — our decisions about how we prioritize resources, and whether we pay the cost to reduce litter or externalize it to our wildlife, soil, water, and downstream communities. Do we put a trash can near a fishing area, or let litter wash downstream? Do we provide trash services for the unhoused, or create litter hotspots? Do we choose reusable cups or single-use plastic? Our litter data gives us a clearer view of the impact these decisions have — and where we can do better.</p>
+    </div>
+  </div>
+</div>
+
+<!-- FOR FUN -->
+<div class="band" id="for-fun">
+  <div class="wrap" style="padding-top:0;padding-bottom:0;">
+    <span class="section-label">Get in on the Fun</span>
+    <h2>For Fun</h2>
+    <p>Litter cleanup doesn't have to be all business. Here are a couple of ways to make it a game.</p>
+    <div class="grid-2">
+      <div class="card">
+        <h3>Project Cleanup &amp; Litter Bingo</h3>
+        <p>Use the resources available through the City's Project Cleanup Program and organize a neighborhood Litter Bingo Contest to make cleaning up fun for everyone.</p>
+        <a href="https://www.icgov.org/government/departments-and-divisions/public-works/resource-management/project-cleanup" target="_blank" rel="noopener" class="card-link">Project Cleanup &rarr;</a>
+        &nbsp;
+        <a href="bingo.html" target="_blank" rel="noopener" class="card-link">Play Litter Bingo &rarr;</a>
+      </div>
+      <div class="card">
+        <h3>Help Build the Red Solo Cup Map!</h3>
+        <p>We're tracking Red Solo Cups across Iowa City — and we need your help. When you spot one, photograph it, upload it to OpenLitterMap, and tag it as <strong>red solo cup</strong> or <strong>rsc</strong>. Every tag adds to our map.</p>
+        <a href="https://openlittermap.com" target="_blank" rel="noopener" class="card-link">Open OpenLitterMap &rarr;</a>
+        &nbsp;
+        <a href="data.html?cat=RSC#map-section" target="_blank" rel="noopener" class="card-link">See the Red Solo Cup Map &rarr;</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- GET INVOLVED -->
+<div class="band band-dark" id="support">
+  <div class="wrap" style="padding-top:0;padding-bottom:0;">
+    <span class="section-label">Support the Crew</span>
+    <h2>Get Involved</h2>
+    <p style="color:rgba(255,255,255,.85);">We're looking for dedicated volunteers to fill key roles. Whether you love photography, social media, or community outreach, there's a place for you on the Litter Crew.</p>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;margin-top:2rem;">
+      <div class="vol-card">
+        <div class="vol-icon">Photo</div>
+        <h3>Photographer</h3>
+        <p>Capture before-and-after shots at our events and document the transformation of Iowa City's streets and parks.</p>
+      </div>
+      <div class="vol-card">
+        <div class="vol-icon">Social</div>
+        <h3>Social Media Manager</h3>
+        <p>Help us tell our story online, grow our community, and celebrate the impact of our volunteers every month.</p>
+      </div>
+      <div class="vol-card">
+        <div class="vol-icon">Youth</div>
+        <h3>Youth Ambassador</h3>
+        <p>Connect with schools and youth organizations to bring the next generation into the fight against litter.</p>
+      </div>
+      <div class="vol-card">
+        <div class="vol-icon">Liaison</div>
+        <h3>Neighborhood Liaison</h3>
+        <p>Be the point of contact for your neighborhood — organize local cleanups and build community partnerships.</p>
+      </div>
+      <div class="vol-card">
+        <div class="vol-icon">Table</div>
+        <h3>Tabling</h3>
+        <p>Represent the Iowa City Litter Crew at community events — sign up for tabling opportunities and help spread the word about our mission.</p>
+      </div>
+      <div class="vol-card">
+        <div class="vol-icon">Data</div>
+        <h3>Butt Barometer Leader</h3>
+        <p>Lead a team taking 10-minute snapshots of cigarette butt density across Iowa City parking lots — building a data picture of where the problem is worst and where it's improving.</p>
+      </div>
+    </div>
+    <div class="text-center mt-2">
+      <a href="mailto:iowacitylittercrew@gmail.com" class="btn btn-amber">Contact Us to Volunteer</a>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <p><strong style="color:rgba(255,255,255,.9);">Iowa City Litter Crew</strong> &mdash; Founded 2023 by Cara Keller &mdash; Iowa City, Iowa</p>
+  <p>Litter data sourced from <a href="https://openlittermap.com" target="_blank" rel="noopener">OpenLitterMap</a> &bull; Join us for monthly cleanups</p>
+  <p style="margin-top:.8rem;"><a href="bingo.html" target="_blank" rel="noopener">Play Litter Bingo &rarr;</a></p>
+</footer>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  showTab(document.getElementById('tabUpcoming'), 'upcoming');
+});
+
+function showTab(btn, id) {
+  const wrap = btn.closest('.wrap');
+  wrap.querySelectorAll('.tab-panel').forEach(p => p.style.display = 'none');
+  btn.closest('.tabs').querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + id).style.display = '';
+  btn.classList.add('active');
+}
+
+function toggleAccord(hd) {
+  const body = hd.nextElementSibling;
+  const icon = hd.querySelector('.accord-icon');
+  const isOpen = body.classList.contains('open');
+  hd.closest('.tab-panel, .band, .wrap').querySelectorAll('.accord-body.open').forEach(b => {
+    b.classList.remove('open');
+    b.previousElementSibling.querySelector('.accord-icon').textContent = '+';
+  });
+  if (!isOpen) {
+    body.classList.add('open');
+    icon.textContent = '−';
+  }
+}
+
+</script>
+</body>
+</html>

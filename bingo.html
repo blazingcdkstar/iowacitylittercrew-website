@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Litter Bingo – Iowa City Litter Crew</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --g-dark:    #1b5e20;
+      --g-primary: #2e7d32;
+      --g-medium:  #388e3c;
+      --g-pale:    #e8f5e9;
+      --amber:     #f57f17;
+      --amber-lt:  #ffca28;
+      --text:      #1a1a1a;
+      --text-lt:   #757575;
+      --border:    #e0e0e0;
+    }
+
+    body { font-family: sans-serif; background: var(--g-pale); color: var(--text); min-height: 100vh; }
+
+    /* NAV */
+    nav {
+      background: var(--g-dark); display: flex; align-items: center;
+      justify-content: space-between; padding: 0 2rem; height: 58px;
+    }
+    .nav-brand { color: white; font-size: 1rem; font-weight: bold; text-decoration: none; letter-spacing: .4px; }
+    .nav-back   { color: rgba(255,255,255,.82); text-decoration: none; font-size: .88rem; letter-spacing: .4px; transition: color .2s; }
+    .nav-back:hover { color: var(--amber-lt); }
+
+    /* PAGE */
+    .page { max-width: 700px; margin: 0 auto; padding: 2.5rem 1rem 4rem; text-align: center; }
+
+    .page-logo { width: 90px; margin-bottom: 1rem; }
+
+    h1 { font-family: Georgia, serif; font-size: 2.2rem; color: var(--g-dark); margin-bottom: .3rem; }
+    h1::after { content: ''; display: block; height: 3px; width: 55px; background: var(--amber); margin: .4rem auto 0; border-radius: 2px; }
+    .subtitle { font-size: .92rem; color: var(--text-lt); margin: .8rem 0 1.8rem; }
+
+    /* BINGO HEADER */
+    .bingo-header {
+      display: grid; grid-template-columns: repeat(5,1fr); gap: 4px;
+      margin-bottom: 4px; max-width: 580px; margin-left: auto; margin-right: auto;
+    }
+    .bingo-letter {
+      background: var(--g-primary); color: white;
+      font-size: 1.5rem; font-weight: 900; letter-spacing: 2px;
+      padding: .5rem; border-radius: 6px;
+    }
+
+    /* GRID */
+    .bingo-grid {
+      display: grid; grid-template-columns: repeat(5,1fr); gap: 4px;
+      max-width: 580px; margin: 0 auto;
+    }
+    .cell {
+      background: white; border-radius: 6px; border: 2px solid var(--border);
+      aspect-ratio: 1 / 1; display: flex; align-items: center; justify-content: center;
+      font-size: .72rem; font-weight: 600; color: var(--text);
+      text-align: center; padding: .4rem; cursor: pointer;
+      transition: background .15s, border-color .15s; line-height: 1.25;
+      user-select: none;
+    }
+    .cell:hover:not(.free) { border-color: var(--g-medium); background: #f1f8e9; }
+    .cell.marked:not(.free) {
+      background: var(--g-primary); color: white; border-color: var(--g-dark);
+    }
+    .cell.free { cursor: default; background: var(--g-pale); border-color: var(--g-primary); }
+    .cell.free img { width: 68%; height: 68%; object-fit: contain; }
+
+    /* BINGO WIN */
+    .bingo-win {
+      display: none; margin: 1.5rem auto 0;
+      background: var(--amber); color: white;
+      border-radius: 12px; padding: 1.2rem 2rem;
+      font-size: 1.3rem; font-weight: 700; font-family: Georgia, serif;
+      max-width: 400px;
+      animation: pop .3s ease;
+    }
+    .bingo-win span { font-size: 1.8rem; display: block; }
+    @keyframes pop {
+      0%   { transform: scale(.7); opacity: 0; }
+      80%  { transform: scale(1.06); }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    /* BUTTONS */
+    .controls { margin-top: 1.5rem; display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+    .btn {
+      display: inline-block; padding: .65rem 1.6rem; border-radius: 30px;
+      font-family: sans-serif; font-weight: 700; font-size: .92rem;
+      letter-spacing: .4px; cursor: pointer; border: none; transition: background .2s, transform .18s;
+    }
+    .btn-green { background: var(--g-primary); color: white; }
+    .btn-green:hover { background: var(--g-dark); transform: translateY(-2px); }
+    .btn-outline { background: white; color: var(--g-primary); border: 2px solid var(--g-primary); }
+    .btn-outline:hover { background: var(--g-pale); }
+
+    .hint { font-size: .78rem; color: var(--text-lt); margin-top: 1.2rem; }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-brand" href="index.html">Iowa City Litter Crew</a>
+  <a class="nav-back" href="index.html">&larr; Back to site</a>
+</nav>
+
+<div class="page">
+  <img src="Logo/ICLC No1 2-13-26.png" alt="Iowa City Litter Crew" class="page-logo">
+  <h1>Litter Bingo</h1>
+  <p class="subtitle">Find these items on your next walk or cleanup. Click each square as you spot it!</p>
+
+  <div class="bingo-header">
+    <div class="bingo-letter">B</div>
+    <div class="bingo-letter">I</div>
+    <div class="bingo-letter">N</div>
+    <div class="bingo-letter">G</div>
+    <div class="bingo-letter">O</div>
+  </div>
+
+  <div class="bingo-grid" id="bingo-grid"></div>
+
+  <div class="bingo-win" id="bingo-win">
+    <span>BINGO!</span>
+    Nice work — you're officially a litter hero.
+  </div>
+
+  <div class="controls">
+    <button class="btn btn-green" onclick="newCard()">New Card</button>
+    <button class="btn btn-outline" onclick="clearMarks()">Clear Marks</button>
+  </div>
+
+  <p class="hint">Click any square to mark it. Get 5 in a row to win!</p>
+</div>
+
+<script>
+const ITEMS = [
+  'Cigarette butt', 'Soda can', 'Beer bottle', "McDonald's bag",
+  'Coffee cup', 'Plastic bag', 'Styrofoam cup', 'Water bottle',
+  'Chip bag', 'Straw', 'Bottle cap', 'Energy drink can',
+  'Pizza box', 'Vape pen', 'Six-pack rings', 'Fast food cup',
+  'Broken glass', 'Face mask', 'Gum wrapper', 'Plastic fork',
+  'Cardboard', 'Candy wrapper', 'Receipt', 'Nip bottle',
+  'Beer can', 'Juice box', 'Newspaper', 'Hard seltzer can',
+  'Takeout container', 'Foil wrapper', 'Paper bag', 'Rubber glove',
+  'Snack wrapper', 'Zip-loc bag', 'Plastic spoon', 'Straw wrapper',
+  'Plastic lid', 'Twist-off cap', 'Cigarette pack', 'Foam fragment'
+];
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function newCard() {
+  document.getElementById('bingo-win').style.display = 'none';
+  const picked = shuffle(ITEMS).slice(0, 24);
+  picked.splice(12, 0, 'FREE');
+
+  const grid = document.getElementById('bingo-grid');
+  grid.innerHTML = '';
+
+  picked.forEach((item, i) => {
+    const cell = document.createElement('div');
+    const isFree = item === 'FREE';
+    cell.className = 'cell' + (isFree ? ' free marked' : '');
+
+    if (isFree) {
+      const img = document.createElement('img');
+      img.src = 'Logo/ICLC No1 2-13-26.png';
+      img.alt = 'Free Space';
+      cell.appendChild(img);
+    } else {
+      cell.textContent = item;
+      cell.addEventListener('click', () => {
+        cell.classList.toggle('marked');
+        checkBingo();
+      });
+    }
+    grid.appendChild(cell);
+  });
+}
+
+function clearMarks() {
+  document.querySelectorAll('.cell:not(.free)').forEach(c => c.classList.remove('marked'));
+  document.getElementById('bingo-win').style.display = 'none';
+}
+
+function checkBingo() {
+  const cells = [...document.querySelectorAll('.cell')];
+  const m = cells.map(c => c.classList.contains('marked'));
+
+  for (let r = 0; r < 5; r++) {
+    if ([0,1,2,3,4].every(c => m[r*5+c])) return win();
+  }
+  for (let c = 0; c < 5; c++) {
+    if ([0,1,2,3,4].every(r => m[r*5+c])) return win();
+  }
+  if ([0,6,12,18,24].every(i => m[i])) return win();
+  if ([4,8,12,16,20].every(i => m[i])) return win();
+}
+
+function win() {
+  document.getElementById('bingo-win').style.display = 'block';
+}
+
+newCard();
+</script>
+</body>
+</html>
