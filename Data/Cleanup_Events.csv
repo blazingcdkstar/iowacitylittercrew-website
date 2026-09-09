@@ -9,7 +9,6 @@ Date,Bags Picked Up,Location,Attendee Count,Event Name,lat,lon,URL,Photo Link
 11/9/2024,4,Pepperwood Plaza,2,,41.64128333,-91.52054167,https://www.meetup.com/iowa-city-litter-crew/events/304062940/?eventOrigin=group_calendar, 
 3/9/2025,8,Pepperwood Plaza,5,,41.64128333,-91.52054167,https://www.meetup.com/iowa-city-litter-crew/events/306524461/?eventOrigin=group_events_list, 
 3/16/2025,15,Whispering Meadows Wetland,3,,41.630323,-91.502651,https://www.meetup.com/iowa-city-litter-crew/events/306700738/?eventOrigin=group_events_list, 
-3/16/2025,13,Whispering Meadows Wetland,3,,41.630323,-91.502651,https://www.meetup.com/iowa-city-litter-crew/events/306700738/?eventOrigin=group_events_list, 
 4/19/2025,5,"310 3rd Ave., Coralville IA",6,,41.673523,-91.568909,https://www.meetup.com/iowa-city-litter-crew/events/307015270/?eventOrigin=group_past_events, 
 3/22/2025,8,Whispering Meadows Wetland,9,,41.630323,-91.502651,https://www.meetup.com/iowa-city-litter-crew/events/307809579/?eventOrigin=group_events_list,https://openlittermap.com/global?lat=41.629741666667&lon=-91.499252777778&zoom=17&photoId=546337&load=true
 7/12/2025,3,South of 6 Litter Pickup,3,,41.639734,-91.521068,https://www.meetup.com/iowa-city-litter-crew/events/308583267/?eventOrigin=group_events_list, 
@@ -28,8 +27,9 @@ Date,Bags Picked Up,Location,Attendee Count,Event Name,lat,lon,URL,Photo Link
 5/30/2026,4,Sycamore Mall,,,,,https://www.meetup.com/iowa-city-litter-crew/events/314516247/?eventOrigin=group_events_list,https://openlittermap.com/global?lat=41.641788099722&lon=-91.507475799722&zoom=17&photoId=546736&load=true
 6/6/2026,8,Westside Neighborhood,,,,,https://www.meetup.com/iowa-city-litter-crew/events/314767004/?eventOrigin=group_events_list, 
 6/27/2026,10,Iowa River Corridor Trail,,,,,https://www.meetup.com/iowa-city-litter-crew/events/315145213/?eventOrigin=group_events_list,https://openlittermap.com/global?lat=41.648890&lon=-91.534669&zoom=17.00&photo=545909&load=true&open=true
-8/1/2026,,Wetherby Park Walk,,,,,https://www.meetup.com/iowa-city-litter-crew/events/315146096/?eventOrigin=group_events_list, 
-9/6/2026,,Ralston Creek,,,,,https://www.meetup.com/iowa-city-litter-crew/events/315150894/?eventOrigin=group_events_list, 
+8/1/2026,,Wetherby Park Walk,,,,,Rescheduled due to weather., 
+9/6/2026,11,Ralston Creek,6,,41.65803667,-91.52878667,https://www.meetup.com/iowa-city-litter-crew/events/315150894/?eventOrigin=group_events_list,https://openlittermap.com/global?lat=41.658762&lon=-91.528795&zoom=17.00&load=true&open=true&filter=date%3A2026-09-01&fromDate=2026-09-01&toDate=2026-09-30&photo=553161
+9/20/2026,,Wetherby Park Walk,,,,,https://www.meetup.com/iowa-city-litter-crew/events/316065402/?eventOrigin=group_events_list,
 10/3/2026,,Miller Orchard Neighborhood,,,,,https://www.meetup.com/iowa-city-litter-crew/events/315356586/?eventOrigin=group_events_list, 
 10/17/2026,,Northside Neighborhood,,,,,https://www.meetup.com/iowa-city-litter-crew/events/315356603/?eventOrigin=group_events_list, 
 11/7/2026,,Sycamore Greenway,,,,,https://www.meetup.com/iowa-city-litter-crew/events/315150564/?eventOrigin=group_events_list, 
