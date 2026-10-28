@@ -94,6 +94,8 @@
     .bus-layer-btn.active:hover { background:#1565c0; color:white; border-color:#1565c0; }
     .trash-layer-btn.active { background:#fff3e0; border-color:#e65100; color:#e65100; }
     .trash-layer-btn.active:hover { background:#e65100; color:white; border-color:#e65100; }
+    .wish-bin-btn.active { background:#f3e5f5; border-color:#7b1fa2; color:#7b1fa2; }
+    .wish-bin-btn.active:hover { background:#7b1fa2; color:white; border-color:#7b1fa2; }
     .group-btn { padding:.2rem .55rem; border-radius:20px; border:1px solid #bbb; background:#f0f0f0; color:#444; font-size:.75rem; font-weight:700; cursor:pointer; }
     .group-btn.active { background:#333; color:white; border-color:#333; }
     .group-btn:hover:not(.active) { background:#ddd; }
@@ -571,6 +573,11 @@ const BUS_STOPS = [{lat:41.659477,lon:-91.537787,type:"Shelter",name:"UI Main Li
 {lat:41.662922,lon:-91.55401,type:"Stop",name:"Elliot St @ Carver Hawkeye Arena",trash:"Trash Can Not Available"},
 {lat:41.66377,lon:-91.508343,type:"Stop",name:"Rochester Ave @ Windsor Court",trash:"Trash Can Not Available"},
 {lat:41.663962,lon:-91.511674,type:"Stop",name:"Rochester Ave @ 7th Ave",trash:"Trash Can Not Available"}];
+const WISH_BINS = [
+  {lat:41.6425,lon:-91.5085,reason:'<b>&#x1F4A1; Wish Bin #1</b><br>~2,700 litter items found across 6 nearby grid cells — the highest-density cluster in Iowa City.<br>Nearest existing bin is <b>~1,000m away</b>, the largest gap in coverage citywide.'},
+  {lat:41.63117,lon:-91.51145,reason:'<b>&#x1F4A1; Wish Bin #2</b><br>736 items across 271 photos — the most-photographed single cell in the dataset.<br>This area is cleaned frequently but keeps accumulating. Nearest bin is <b>~370m away</b>.'},
+  {lat:41.61913,lon:-91.50547,reason:'<b>&#x1F4A1; Wish Bin #3</b><br>264 items, 123 photos, and the nearest bin is <b>~1,075m away</b> — tied for the worst coverage gap.<br>South Iowa City is underserved relative to the litter volume found here.'}
+];
 const TRASH_BINS = [{lat:41.629889,lon:-91.49899},{lat:41.634505,lon:-91.518136},{lat:41.629892,lon:-91.498939},{lat:41.625256,lon:-91.526314},{lat:41.626358,lon:-91.528306},{lat:41.626808,lon:-91.529761},{lat:41.627286,lon:-91.530853},{lat:41.649053,lon:-91.535369},{lat:41.675683,lon:-91.542961},{lat:41.675608,lon:-91.542839},{lat:41.675758,lon:-91.542733},{lat:41.675769,lon:-91.542764},{lat:41.675756,lon:-91.542314},{lat:41.675756,lon:-91.542314},{lat:41.675769,lon:-91.542314},{lat:41.675953,lon:-91.542206},{lat:41.675761,lon:-91.542244},{lat:41.675731,lon:-91.542192},{lat:41.667369,lon:-91.557306},{lat:41.630557,lon:-91.507088},{lat:41.627624,lon:-91.511647},{lat:41.634067,lon:-91.532319},{lat:41.634139,lon:-91.532264},{lat:41.634725,lon:-91.53225},{lat:41.634811,lon:-91.532211},{lat:41.633822,lon:-91.531311},{lat:41.633669,lon:-91.531294},{lat:41.629272,lon:-91.527864},{lat:41.6328,lon:-91.53135},{lat:41.632739,lon:-91.531289},{lat:41.632736,lon:-91.53135},{lat:41.632233,lon:-91.530883},{lat:41.630731,lon:-91.531472},{lat:41.620564,lon:-91.523619},{lat:41.626869,lon:-91.527589},{lat:41.651781,lon:-91.527122},{lat:41.633849,lon:-91.505377},{lat:41.666736,lon:-91.527589},{lat:41.670953,lon:-91.524139}];
 
 const catLabels = {
@@ -682,8 +689,13 @@ Object.entries(CAT_COLORS).forEach(function(entry) {
   trashBtn.className = 'map-ctrl-btn trash-layer-btn';
   trashBtn.id = 'trashBinsBtn';
   trashBtn.innerHTML = '&#x1F5D1; Public Trash Bins';
+  var wishBtn = document.createElement('button');
+  wishBtn.className = 'map-ctrl-btn wish-bin-btn';
+  wishBtn.id = 'wishBinsBtn';
+  wishBtn.innerHTML = '&#x1F4A1; Wish Bins';
   layerRow.appendChild(busBtn);
   layerRow.appendChild(trashBtn);
+  layerRow.appendChild(wishBtn);
   filtersEl.appendChild(layerRow);
 })();
 
@@ -706,6 +718,8 @@ var busStopMarkers = [];
 var showBusStops = false;
 var trashBinMarkers = [];
 var showTrashBins = false;
+var wishBinMarkers = [];
+var showWishBins = false;
 var mapGrouping = 4;
 
 function isInCircle(lat, lon) {
@@ -791,9 +805,29 @@ function renderTrashBins() {
   });
 }
 
+function renderWishBins() {
+  wishBinMarkers.forEach(function(m) { map.removeLayer(m); });
+  wishBinMarkers = [];
+  if (!showWishBins) return;
+  var icon = L.divIcon({
+    html: '<div style="width:26px;height:26px;border-radius:50%;background:#7b1fa2;border:2px solid white;display:flex;align-items:center;justify-content:center;font-size:14px;box-shadow:0 1px 4px rgba(0,0,0,0.4);">&#x1F4A1;</div>',
+    className: '',
+    iconSize: [26, 26],
+    iconAnchor: [13, 13],
+    tooltipAnchor: [13, -12]
+  });
+  WISH_BINS.forEach(function(b) {
+    var m = L.marker([b.lat, b.lon], {icon: icon})
+      .bindTooltip(b.reason, {maxWidth: 260});
+    m.addTo(map);
+    wishBinMarkers.push(m);
+  });
+}
+
 function refreshCharts() {
   renderMap();
   renderTrashBins();
+  renderWishBins();
   var sunData;
   if (circleCenter && circleRadius > 0) {
     var catTotals = {};
@@ -956,6 +990,13 @@ applyDateRange();
     showTrashBins = !showTrashBins;
     trashBinsBtn.classList.toggle('active', showTrashBins);
     renderTrashBins();
+  });
+
+  var wishBinsBtn = document.getElementById('wishBinsBtn');
+  wishBinsBtn.addEventListener('click', function() {
+    showWishBins = !showWishBins;
+    wishBinsBtn.classList.toggle('active', showWishBins);
+    renderWishBins();
   });
 
   document.getElementById('popOutMapBtn').addEventListener('click', function() {
